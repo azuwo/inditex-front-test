@@ -42,5 +42,16 @@ module.exports = {
     'tailwindcss/no-contradicting-classname': 'error',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error'
-  }
+  },
+  ignores: ["/node_modules",
+    "/scripts",
+    "/config",
+    "/pnpm-lock.yaml",
+    "/pnpm-workspace.yaml",
+    ".DS_Store",
+    "/package.json",
+    "/tsconfig.json",
+    "**/*.md",
+    "build",
+    ".eslintrc.js"]
 }
