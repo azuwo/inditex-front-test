@@ -13,8 +13,6 @@ const PodcastDetail = ({ id }: IPodcastDetail) => {
   const podcast = useBoundStore((state) => state.podcast)
   const rss = useBoundStore((state) => state.rss)
 
-  console.log(podcast)
-
   useEffect(() => {
     podcastRestClient(id)
   }, [])
@@ -30,6 +28,7 @@ const PodcastDetail = ({ id }: IPodcastDetail) => {
         description={rss.description}
         imageUrl={podcast.artworkUrl600}
         podcastName={podcast.collectionName}
+        detailUrl={`/podcast/${podcast.artistId}`}
       />
       {Object.keys(rss).length !== 0 ? (
         <section className="flex w-[55dvw] flex-col gap-4">
@@ -49,10 +48,13 @@ const PodcastDetail = ({ id }: IPodcastDetail) => {
               </thead>
               <tbody className="overflow-y-auto text-start text-sm">
                 {rss.item.map((episode) => (
-                  <tr className="border-b odd:bg-slate-100" key={episode.guid}>
+                  <tr
+                    className="border-b odd:bg-slate-100"
+                    key={episode.guid['#text']}
+                  >
                     <td className="p-2 pl-4">
                       <Link
-                        to={`/podcast/${podcast.collectionId}/episode/${episode.guid}`}
+                        to={`/podcast/${podcast.collectionId}/episode/${episode.guid['#text']}`}
                         className="text-blue-500"
                       >
                         {episode.title}

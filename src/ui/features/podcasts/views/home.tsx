@@ -1,12 +1,14 @@
 import { useBoundStore } from '@/core/zustand/store'
 import CardCast from '@/ui/components/card-cast'
 import { useEffect, useId, useState } from 'react'
+import { useDebounceCallback } from 'usehooks-ts'
 
 const Home = () => {
   const restClient = useBoundStore((state) => state.fetchAll)
   const podcastList = useBoundStore((state) => state.podcasts)
   const [filteredList, setFilteredList] = useState(podcastList)
   const [inputFilter, setInputFilter] = useState('')
+  const debounced = useDebounceCallback(setInputFilter, 500)
 
   useEffect(() => {
     restClient()
@@ -18,6 +20,7 @@ const Home = () => {
 
   const filterPodcast = (event: React.FormEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value
+    debounced(value)
     setInputFilter(value)
     if (value.length > 0) {
       const newList = podcastList.filter((podcast) =>
