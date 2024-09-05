@@ -4,7 +4,7 @@ import { XMLParser } from 'fast-xml-parser'
 import { StateCreator } from 'zustand'
 
 export interface IRestClientSlice {
-  queryDate: Date
+  queryDate: number
   loading: boolean
   fetchAll: () => void
   fetchPodcast: (id: string) => void
@@ -20,7 +20,7 @@ export const restClientSlice: StateCreator<
   [],
   IRestClientSlice
 > = (set) => ({
-  queryDate: new Date(),
+  queryDate: Date.now(),
   loading: false,
   fetchAll: async () => {
     set({ loading: true })
