@@ -1,15 +1,18 @@
 import { IPodcastSlice } from '@/core/zustand/slices/podcast-slice'
 import axios from 'axios'
+import { XMLParser } from 'fast-xml-parser'
 import { StateCreator } from 'zustand'
 
 export interface IRestClientSlice {
+  queryDate: Date
   loading: boolean
   fetchAll: () => void
-  fetchPodcast: (id: string) => void //TODO: change return type to promise<>
-  fetchEpisodes: (feedUrl: string) => void //TODO: change return type to promise<>
+  fetchPodcast: (id: string) => void
+  fetchEpisodes: (feedUrl: string) => void
 }
 
-const CORS_PROXY = 'https://api.allorigins.win/get?url='
+// const CORS_PROXY = 'https://api.allorigins.win/get?url='
+const CORS_PROXY = 'https://corsproxy.io/?'
 
 export const restClientSlice: StateCreator<
   IRestClientSlice & IPodcastSlice,
@@ -17,39 +20,43 @@ export const restClientSlice: StateCreator<
   [],
   IRestClientSlice
 > = (set) => ({
+  queryDate: new Date(),
   loading: false,
   fetchAll: async () => {
     set({ loading: true })
-    const response = await axios.get(
-      `${CORS_PROXY}https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json`
-    )
-    set({ loading: false })
-    const podcasts: IFeed = JSON.parse(response.data.contents).feed
-    let podlist: IEntry[] = []
-    podcasts.entry.forEach((entry) => {
-      podlist.push(entry)
+    const url =
+      CORS_PROXY +
+      encodeURIComponent(
+        'https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json'
+      )
+    await axios.get(url).then((response) => {
+      const podcasts: IFeed = response.data.feed
+      let podlist: IEntry[] = []
+      podcasts.entry.forEach((entry) => {
+        podlist.push(entry)
+      })
+      set({ podcasts: podlist })
+      set({ loading: false })
     })
-    set((state) => ({ podcasts: podlist }))
   },
 
   fetchPodcast: async (id: string) => {
-    console.log('LOADING...')
     set({ loading: true })
-    const response = await axios.get(
-      `${CORS_PROXY}https://itunes.apple.com/lookup?id=${id}`
-    )
-    console.log('LOADED!!!')
-    set({ loading: false })
-    console.log('fetchPodcast: ', JSON.parse(response.data.contents))
+    const uri = encodeURIComponent(`https://itunes.apple.com/lookup?id=${id}`)
+    await axios.get(`${CORS_PROXY}${uri}`).then((response) => {
+      const podcast = response.data.results[0]
+      set({ podcast: podcast })
+      set({ loading: false })
+    })
   },
 
   fetchEpisodes: async (feedUrl: string) => {
-    console.log('LOADING...')
     set({ loading: true })
-    const rss = await axios.get(`${CORS_PROXY}${feedUrl}`)
-    console.log('LOADED!!!')
+    const rss = await axios.get(`${CORS_PROXY}${encodeURIComponent(feedUrl)}`)
+    const parser = new XMLParser()
+    const parsedRss = parser.parse(rss.data)
+    if (parsedRss?.rss?.channel !== undefined)
+      set({ rss: parsedRss?.rss?.channel })
     set({ loading: false })
-    const episodes = JSON.parse(rss.data.contents)
-    return episodes
   }
 })
