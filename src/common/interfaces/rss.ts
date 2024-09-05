@@ -1,5 +1,5 @@
 export interface IRss {
-  'atom:link': string
+  'atom:link': IAtomLink
   title: string
   pubDate: string
   lastBuildDate: string
@@ -12,15 +12,21 @@ export interface IRss {
   'itunes:summary': string
   image: IImage
   'itunes:author': string
-  'itunes:category': string
-  'itunes:image': string
+  'itunes:category': IItunesCategory
+  'itunes:image': IItunesImage
   'itunes:explicit': boolean
-  'itunes:owner': ItunesOwner
+  'itunes:owner': IItunesOwner
   description: string
   'itunes:type': string
   'itunes:new-feed-url': string
-  'podcast:locked': string
+  'podcast:locked': IPodcastLocked
   item: IEpisode[]
+}
+
+export interface IAtomLink {
+  _href: string
+  _rel: string
+  _type: string
 }
 
 export interface IImage {
@@ -29,26 +35,56 @@ export interface IImage {
   link: string
 }
 
-export interface ItunesOwner {
+export interface IItunesCategory {
+  _text: string
+}
+
+export interface IItunesImage {
+  _href: string
+}
+
+export interface IItunesOwner {
   'itunes:name': string
   'itunes:email': string
+}
+
+export interface IPodcastLocked {
+  '#text': string
+  _owner: string
 }
 
 export interface IEpisode {
   title: string
   'itunes:title'?: string
   pubDate: string
-  guid: string
+  guid: IGuid
   link: string
-  'itunes:image'?: string
+  'itunes:image'?: IItunesImage
   description: string
   'content:encoded': string
-  enclosure?: string
+  enclosure?: IEnclosure
   'itunes:duration': any
   'itunes:explicit'?: boolean
   'itunes:keywords': string
   'itunes:subtitle': string
   'itunes:episodeType'?: string
-  'media:restriction'?: string
+  'media:restriction'?: IMediaRestriction
   'itunes:author'?: string
+}
+
+export interface IGuid {
+  '#text': string
+  _isPermaLink: string
+}
+
+export interface IEnclosure {
+  _length: string
+  _type: string
+  _url: string
+}
+
+export interface IMediaRestriction {
+  '#text': string
+  _relationship: string
+  _type: string
 }

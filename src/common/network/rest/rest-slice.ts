@@ -53,7 +53,12 @@ export const restClientSlice: StateCreator<
   fetchEpisodes: async (feedUrl: string) => {
     set({ loading: true })
     const rss = await axios.get(`${CORS_PROXY}${encodeURIComponent(feedUrl)}`)
-    const parser = new XMLParser()
+    const options = {
+      ignoreAttributes: false,
+      ignoreNameSpace: false,
+      attributeNamePrefix: '_'
+    }
+    const parser = new XMLParser(options)
     const parsedRss = parser.parse(rss.data)
     if (parsedRss?.rss?.channel !== undefined)
       set({ rss: parsedRss?.rss?.channel })
