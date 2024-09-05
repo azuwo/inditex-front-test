@@ -1,10 +1,11 @@
+import { IRss } from '@/common/interfaces/rss'
 import { IRestClientSlice } from '@/common/network/rest/rest-slice'
 import { StateCreator } from 'zustand'
 
 export interface IPodcastSlice {
   podcasts: IEntry[]
-  podcast: IEntry
-  episode: any //TODO: create episode Interface based on fetched data
+  podcast: IPodcast
+  rss: IRss
 }
 
 export const podcastSlice: StateCreator<
@@ -14,6 +15,6 @@ export const podcastSlice: StateCreator<
   IPodcastSlice
 > = (get, set) => ({
   podcasts: [],
-  podcast: {} as IEntry,
-  episode: {}
+  podcast: {} as IPodcast,
+  rss: {} as IRss
 })

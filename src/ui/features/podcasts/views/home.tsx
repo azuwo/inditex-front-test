@@ -1,5 +1,5 @@
 import { useBoundStore } from '@/core/zustand/store'
-import CardCast from '@/ui/components/cardCast'
+import CardCast from '@/ui/components/card-cast'
 import { useEffect, useId, useState } from 'react'
 
 const Home = () => {
@@ -45,7 +45,9 @@ const Home = () => {
       </div>
       <div className="grid grid-cols-4 justify-items-center gap-y-32 object-center pt-12">
         {filteredList &&
-          filteredList.map((podcast) => <CardCast {...podcast} />)}
+          filteredList.map((podcast) => (
+            <CardCast key={podcast.id.label} {...podcast} />
+          ))}
       </div>
     </main>
   )
