@@ -19,28 +19,30 @@ export const restClientSlice: StateCreator<
 > = (set) => ({
   loading: false,
   fetchAll: async () => {
-    console.log('LOADING...')
     set({ loading: true })
     const response = await axios.get(
       `${CORS_PROXY}https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json`
     )
-    console.log('LOADED!!!')
     set({ loading: false })
     const podcasts: IFeed = JSON.parse(response.data.contents).feed
-    console.log('FETCH ALL: ', podcasts)
     let podlist: IEntry[] = []
     podcasts.entry.forEach((entry) => {
       podlist.push(entry)
     })
-    console.log('PODLIST: ', podlist)
     set((state) => ({ podcasts: podlist }))
   },
+
   fetchPodcast: async (id: string) => {
+    console.log('LOADING...')
+    set({ loading: true })
     const response = await axios.get(
       `${CORS_PROXY}https://itunes.apple.com/lookup?id=${id}`
     )
-    console.log('fetchPodcast: ', response.data)
+    console.log('LOADED!!!')
+    set({ loading: false })
+    console.log('fetchPodcast: ', JSON.parse(response.data.contents))
   },
+
   fetchEpisodes: async (feedUrl: string) => {
     console.log('LOADING...')
     set({ loading: true })
