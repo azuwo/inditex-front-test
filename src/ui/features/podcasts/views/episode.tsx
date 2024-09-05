@@ -7,8 +7,7 @@ interface IEpisode {
 }
 
 const EpisodeDetail = ({ episodeId }: IEpisode) => {
-  const podcast = useBoundStore((state) => state.podcast)
-  const rss = useBoundStore((state) => state.rss)
+  const { podcast, rss } = useBoundStore((state) => state)
   const episode = rss.item.find((item) => item.guid['#text'] === episodeId)
 
   return (

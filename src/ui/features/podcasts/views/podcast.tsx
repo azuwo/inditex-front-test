@@ -1,3 +1,4 @@
+import { isOutdated } from '@/common/utils/utils'
 import { useBoundStore } from '@/core/zustand/store'
 import PodcastCard from '@/ui/components/podcast-card'
 import { useEffect } from 'react'
@@ -10,15 +11,18 @@ interface IPodcastDetail {
 const PodcastDetail = ({ id }: IPodcastDetail) => {
   const podcastRestClient = useBoundStore((state) => state.fetchPodcast)
   const episodesRestClient = useBoundStore((state) => state.fetchEpisodes)
-  const podcast = useBoundStore((state) => state.podcast)
-  const rss = useBoundStore((state) => state.rss)
+  const { podcast, rss, queryDate } = useBoundStore((state) => state)
 
   useEffect(() => {
-    podcastRestClient(id)
+    if (isOutdated(queryDate)) {
+      podcastRestClient(id)
+    }
   }, [])
 
   useEffect(() => {
-    episodesRestClient(podcast.feedUrl)
+    if (isOutdated(queryDate)) {
+      episodesRestClient(podcast.feedUrl)
+    }
   }, [podcast.feedUrl])
 
   return (

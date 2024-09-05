@@ -1,17 +1,23 @@
+import { isOutdated } from '@/common/utils/utils'
 import { useBoundStore } from '@/core/zustand/store'
 import CardCast from '@/ui/components/card-cast'
 import { useEffect, useId, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 
 const Home = () => {
-  const restClient = useBoundStore((state) => state.fetchAll)
-  const podcastList = useBoundStore((state) => state.podcasts)
+  const {
+    queryDate,
+    podcasts: podcastList,
+    fetchAll
+  } = useBoundStore((state) => state)
   const [filteredList, setFilteredList] = useState(podcastList)
   const [inputFilter, setInputFilter] = useState('')
   const debounced = useDebounceCallback(setInputFilter, 500)
 
   useEffect(() => {
-    restClient()
+    if (isOutdated(queryDate)) {
+      fetchAll()
+    }
   }, [])
 
   useEffect(() => {
