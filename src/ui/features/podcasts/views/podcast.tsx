@@ -1,7 +1,9 @@
+import { IPersistance } from '@/common/interfaces/persistance'
 import { isOutdated } from '@/common/utils/utils'
 import { useBoundStore } from '@/core/zustand/store'
 import PodcastCard from '@/ui/components/podcast-card'
 import { useEffect } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 import { Link } from 'wouter'
 
 interface IPodcastDetail {
@@ -11,16 +13,23 @@ interface IPodcastDetail {
 const PodcastDetail = ({ id }: IPodcastDetail) => {
   const podcastRestClient = useBoundStore((state) => state.fetchPodcast)
   const episodesRestClient = useBoundStore((state) => state.fetchEpisodes)
-  const { podcast, rss, queryDate } = useBoundStore((state) => state)
+  const { podcast, rss } = useBoundStore((state) => state)
+  const [value] = useLocalStorage('podcast store', {} as IPersistance)
 
   useEffect(() => {
-    if (isOutdated(queryDate)) {
+    if (
+      Object.keys(value.state.podcast).length === 0 ||
+      isOutdated(value.state.queryDate)
+    ) {
       podcastRestClient(id)
     }
   }, [])
 
   useEffect(() => {
-    if (isOutdated(queryDate)) {
+    if (
+      Object.keys(value.state.rss).length === 0 ||
+      isOutdated(value.state.queryDate)
+    ) {
       episodesRestClient(podcast.feedUrl)
     }
   }, [podcast.feedUrl])
