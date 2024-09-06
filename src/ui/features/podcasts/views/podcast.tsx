@@ -13,17 +13,23 @@ interface IPodcastDetail {
 const PodcastDetail = ({ id }: IPodcastDetail) => {
   const podcastRestClient = useBoundStore((state) => state.fetchPodcast)
   const episodesRestClient = useBoundStore((state) => state.fetchEpisodes)
-  const { podcast, rss, queryDate } = useBoundStore((state) => state)
+  const { podcast, rss } = useBoundStore((state) => state)
   const [value] = useLocalStorage('podcast store', {} as IPersistance)
 
   useEffect(() => {
-    if (Object.keys(value).length === 0 || isOutdated(value.state.queryDate)) {
+    if (
+      Object.keys(value.state.podcast).length === 0 ||
+      isOutdated(value.state.queryDate)
+    ) {
       podcastRestClient(id)
     }
   }, [])
 
   useEffect(() => {
-    if (Object.keys(value).length === 0 || isOutdated(value.state.queryDate)) {
+    if (
+      Object.keys(value.state.rss).length === 0 ||
+      isOutdated(value.state.queryDate)
+    ) {
       episodesRestClient(podcast.feedUrl)
     }
   }, [podcast.feedUrl])
