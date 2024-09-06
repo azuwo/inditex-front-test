@@ -1,8 +1,9 @@
+import { IPersistance } from '@/common/interfaces/persistance'
 import { isOutdated } from '@/common/utils/utils'
 import { useBoundStore } from '@/core/zustand/store'
 import CardCast from '@/ui/components/card-cast'
 import { useEffect, useId, useState } from 'react'
-import { useDebounceCallback } from 'usehooks-ts'
+import { useDebounceCallback, useLocalStorage } from 'usehooks-ts'
 
 const Home = () => {
   const {
@@ -13,9 +14,10 @@ const Home = () => {
   const [filteredList, setFilteredList] = useState(podcastList)
   const [inputFilter, setInputFilter] = useState('')
   const debounced = useDebounceCallback(setInputFilter, 500)
+  const [value] = useLocalStorage('podcast store', {} as IPersistance)
 
   useEffect(() => {
-    if (isOutdated(queryDate)) {
+    if (Object.keys(value).length === 0 || isOutdated(value.state.queryDate)) {
       fetchAll()
     }
   }, [])
